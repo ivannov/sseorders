@@ -10,6 +10,14 @@ class Contractor extends Component {
         }
     }
 
+    componentDidMount() {
+        const eventSource = new EventSource("http://localhost:8080/order/stream");
+        eventSource.onmessage = event => {
+            const newOrder = JSON.parse(event.data);
+            this.setState({orders: [newOrder, ...this.state.orders]})
+        }
+    }
+
     getOrdersForContractor(name) {
         axios.get('http://localhost:8080/order',
             {params: {contractor: name}}
