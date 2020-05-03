@@ -1,0 +1,19 @@
+version: '2'
+volumes:
+  sseorders:
+
+services:
+
+  mysql-sseorders:
+    image: mysql:5.7
+    container_name: mysql-sseorders
+    volumes:
+      - sseorders:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=sseorders
+      - MYSQL_USER=sseorders
+      - MYSQL_PASSWORD=sseorders
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
