@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from "axios";
+import {Table} from "react-bootstrap";
 
 class Contractor extends Component {
 
@@ -27,17 +28,17 @@ class Contractor extends Component {
 
     render() {
         return (
-            <div>
-                <button onClick={this.getOrdersForContractor.bind(this, this.props.name)}>
+            <div className="w-50 m-auto">
+                <button className="btn btn-primary m-2" onClick={this.getOrdersForContractor.bind(this, this.props.name)}>
                     {this.props.name}'s orders
                 </button>
-                <table>
+                <Table striped bordered>
                     <thead>
-                        <tr>
-                            <th>Task</th>
-                            <th>Amount</th>
-                            <th>Timestamp</th>
-                        </tr>
+                    <tr>
+                        <th>Task</th>
+                        <th>Amount</th>
+                        <th>Timestamp</th>
+                    </tr>
                     </thead>
                     <tbody>
                     {
@@ -50,7 +51,7 @@ class Contractor extends Component {
                         )
                     }
                     </tbody>
-                </table>
+                </Table>
             </div>
         )
     }
