@@ -1,0 +1,81 @@
+= SSE showcase with Quarkus and react.js
+
+This is a sample project, which showcases firing Server Sent Events (SSE) from Quarkus to a react.js web frontend.
+
+== Descirption of the showcase
+
+The showcase is based on two entities:
+
+* A `Contractor` that has a name
+* An `Order` that has a name, amount, timestamp and a contractor to fullfil it
+
+There is just one REST resource: `/order`. 
+
+You create a new order for a contractor by POST-ing to that resource: `POST /order/<contractorName>`.
+
+And you can also get the orders for a contractor by calling `GET /order?contractor=<contractor-name>`.
+
+The users are precreated via an import.sql file - we have two of them, Alice and Bob.
+
+We've gone here one little step further. Whenever an order is created, there is a server sent event fired to whomever is connected to the `/order/stream` endpoint. Thus the client will be updated without the need for it to non-stop call the `GET` endpoint from above.
+
+== Setting up the showcase
+
+=== The database
+
+First, you need a database. For the sake of simplicity, we've prepared one for you in a docker-compose.yaml in the root of this project. So, if you don't have anything running on port 3306 and you have docker-compose installed on your box, just run:
+
+`docker-compose up`
+
+If you have a process running on 3306 and you don't want to stop it, then simply change in `./docker-compose.yaml` `3306:3306` to `3306:<the-port-you-want>`. As well as change 3306 to that number in `./sseorders-backend/src/main/resources/application.properties`.
+
+If you don't want to use docker-compose, then setup a MySQL database with name sseorders, managed by account sseorders / sseorders.
+
+If you don't want to use MySQL at all, hmmm, then do the same as above in your favorite database and configure Quarkus to use that instead of MySQL.
+
+=== The backend
+
+The backend of the showcase application is using Quarkus. But the only thing you need to have on your system to run it is to have Java 11 and Maven 3.6.1+ installed.
+
+If you have those prerequisites fulfilled, just run:
+
+[source,bash]
+----
+cd sseorders-backend
+mvn compile quarkus:dev
+----
+
+In a while the application server should be app and running, should have created the DB tables and imported the necessary users.
+
+=== The frontend
+
+For the frontend you will need to have npm installed on your box.
+It is running react.js and that's the shortcut to have it running without building and packaging everything.
+Same as running the backend with `mvn compile quarkus:dev` instead of `java -jar <the-fat-jar>`
+
+So, if you have npm in place, from the root of the repository run:
+
+[source,bash]
+----
+cd sseorders-web
+npm install
+npm start
+----
+
+Now we are ready to go
+
+== Experimenting
+
+On the home page there is a navbar with both test contractors: Alice and Bob. You may choose one of them and go to their assignments task. Usually it is empty in the beginning. You may click the button there to reload the assignments from the database.
+
+Suppose you clicked on Alice's page. Now go to a new terminal and create an order for her:
+
+[source,bash]
+----
+curl -i -X POST \
+-H "Content-Type: application/json" \
+-d '{"taskName": "Create a Hello world app", "amount": 100}' \
+http://localhost:8080/order/alice
+----
+
+You should see the new order appearing on Alice's orders page without pressing the button.
